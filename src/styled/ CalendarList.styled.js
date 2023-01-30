@@ -35,9 +35,13 @@ const StyledCalendarList = styled.ul`
             td{
                 color: rgb(62, 80, 91);
             }
+   
             a{
                 text-decoration: none;
                 color: rgb(62, 80, 91);
+                &:hover{
+                    text-decoration: underline;
+                }
         
             }
         }
