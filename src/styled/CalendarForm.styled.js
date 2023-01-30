@@ -19,6 +19,9 @@ const StyledCalendarForm = styled.form.attrs(props => ({
         font-size: 2em;
         text-align: center;
     }
+    span{
+        color: #BF4D33;
+    }
     label {
         color: #999;
    

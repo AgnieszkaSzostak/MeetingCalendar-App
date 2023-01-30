@@ -9,7 +9,7 @@ export const validateForm = (state) => {
         if(required) {
             if(value.length === 0) {
                 console.log('length=0')
-                errors = {...errors, [inputName]: 'Pole obowiązkowe'}
+                errors = {...errors, [inputName]: 'Empty field'}
             }else if(pattern){
                 const reg = new RegExp(pattern)
                 if(!reg.test(value)){
