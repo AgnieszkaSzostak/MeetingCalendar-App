@@ -1,4 +1,12 @@
 import React from 'react';
+import { validateForm } from '../validator';
+import { saveMeetingAction, setErrorsAction} from '../actions/calendar';
+import { sendData } from '../providers/provider';
+import { connect } from 'react-redux';
+import { fields } from '../fields';
+import { CalendarField } from './CalendarField';
+import Submit from './Submit';
+import { StyledCalendarForm } from '../styled/CalendarForm.styled';
 
 class CalendarForm extends React.Component {
     state = {
@@ -7,175 +15,78 @@ class CalendarForm extends React.Component {
         email: '',
         date: '',
         time: '',
-        errors: [],
     }
-
     render() {
-        return (
-            <form action="" onSubmit={ this.handleSubmit }>
-                <ul>{ this.renderErrors() }</ul>
-                <div>
-                    <label>
-                        Data: <input 
-                            name="date" 
-                            onChange={ this.handleFieldChange } 
-                            value={ this.state.date } 
-                            placeholder="RRRR-MM-DD"
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Godzina: <input 
-                            name="time" 
-                            onChange={ this.handleFieldChange } 
-                            value={ this.state.time } 
-                            placeholder="HH:MM"
-                        />
-                    </label>
-                </div>
+        const CalendarFields = fields.map(field => {
+            return (
+                <CalendarField 
+                    key={field.inputName} 
+                    onChange={this.handleFieldChange} 
+                    value={this.state[field.inputName]} 
+                    label={field.label} 
+                    name={field.inputName} 
+                    placeholder={field.placeholder}
+                />
+            )
+        })
 
-                <div>
-                    <label>
-                        Imię: <input 
-                            name="firstName" 
-                            onChange={ this.handleFieldChange } 
-                            value={ this.state.firstName } 
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Nazwisko: <input 
-                            name="lastName" 
-                            onChange={ this.handleFieldChange } 
-                            value={ this.state.lastName } 
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label>
-                        Email: <input 
-                            name="email" 
-                            onChange={ this.handleFieldChange } 
-                            value={ this.state.email } 
-                            placeholder="nazwa@poczty.pl"
-                        />
-                    </label>
-                </div>
-                <div><input type="submit" value="zapisz" /></div>
-            </form>
+        return (
+            <StyledCalendarForm action="" onSubmit={ this.handleSubmit }>
+                <h1>Calendar Form</h1>
+                {CalendarFields}
+                <Submit/>
+            </StyledCalendarForm>
         )
     }
 
-    handleSubmit = e => {
-        e.preventDefault();
+    handleSubmit = (event) => {
+        event.preventDefault();
+        const {setErrors} = this.props;
 
-        const errors = this.validateForm();
-        this.setState({
-            errors,
-        });
-
-        if(errors.length === 0) {
-            this.saveMeeting();
+        const  newErrors = validateForm(this.state);
+        if(newErrors !== null){
+            setErrors(newErrors);
+        }else{
+            this.sendMeetingToApi(this.state)
             this.clearFormFields();
         }
     }
 
-    validateForm() {
-        const errors = [];
-
-        if(!this.isDateCorrect()) {
-            errors.push('Popraw wprowadzoną datę');
-        }
-
-        if(!this.isTimeCorrect()) {
-            errors.push('Popraw wprowadzoną godiznę')
-        }
-
-        if(!this.isFirstNameCorrect()) {
-            errors.push('Wprowadź imię');
-        }
-
-        if(!this.isLastNameCorrect()) {
-            errors.push('Wprowadż nazwisko')
-        }
-
-        if(!this.isEmailCorrect()) {
-            errors.push('Wprowadź poprawny adres email');
-        }
-
-
-        return errors;
-    }
-
-    isDateCorrect() {
-        const pattern = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
-
-        return pattern.test(this.state.date);
-    }
-
-    isTimeCorrect() {
-        const pattern = /^[0-9]{2}:[0-9]{2}$/
-        
-        return pattern.test(this.state.time);
-    }
-
-    isFirstNameCorrect() {
-        return this.state.firstName.length > 0;
-    }
-
-    isLastNameCorrect() {
-        return this.state.lastName.length > 0;
-    }
-
-    isEmailCorrect() {
-        const pattern = /^[0-9a-zA-Z_.-]+@[0-9a-zA-Z.-]+\.[a-zA-Z]{2,3}$/;
-
-        return pattern.test(this.state.email);
-    }
-
     handleFieldChange = e => {
-        if(this.isFieldNameCorrect(e.target.name)) {
-            this.setState({
-                [e.target.name]: e.target.value,
-            });
-        }
+        this.setState({
+            [e.target.name]: e.target.value,
+        })
     }
+    
 
-    saveMeeting() {
-        const {saveMeeting} = this.props;
-
-        if(typeof saveMeeting === 'function') {
-            saveMeeting( this.getFieldsData() );
-        }
+    sendMeetingToApi = (meetingData) => {
+        sendData(meetingData)
+            .then(resp => {
+                this.props.save(resp)
+            })
     }
 
     clearFormFields() {
-        const fieldsData = this.getFieldsData();
+        const fieldsData = this.state;
         for(const prop in fieldsData) {
             fieldsData[prop] = '';
         }
-
         this.setState(fieldsData);
     }
 
-    getFieldsData() {
-        const fieldsData = Object.assign({}, this.state);
-        delete fieldsData['errors'];
+}
 
-        return fieldsData;
-    }
-
-    isFieldNameCorrect(name) {
-        const fieldsData = this.getFieldsData();
-
-        return typeof fieldsData[name] !== 'undefined';
-    }
-
-    renderErrors() {
-        return this.state.errors.map( (err, index) => <li key={ index }>{ err }</li>);
+const mapStateToProps = (state, props) => {
+    return {
+        errors: state.errors
     }
 }
 
-export default CalendarForm
+const mapActionToProps = {
+    save: saveMeetingAction,
+    setErrors: setErrorsAction, 
+}
+
+
+
+export default connect(mapStateToProps, mapActionToProps) (CalendarForm)
