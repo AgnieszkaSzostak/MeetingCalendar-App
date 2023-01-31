@@ -9,7 +9,6 @@ const StyledCalendarList = styled.ul`
     
     li{
         list-style-type: none;
-        /* background-color: rgba(62, 80, 91, 0.8); */
         table{
             display: flex;
             flex-direction: column;
@@ -19,33 +18,35 @@ const StyledCalendarList = styled.ul`
                 grid-template-columns: 35% 25% 40%;
                 padding: 0.5em;
                 color: white;
+                td{
+                    color: rgb(62, 80, 91);
+                }
+       
+                a{
+                    text-decoration: none;
+                    color: rgb(62, 80, 91);
+                    &:hover{
+                        text-decoration: underline;
+                    }
+                }
             }
-
-            tr:first-child{
+            thead > tr{
                 background-color: rgba(62, 80, 91, 0.8);
                 border: 1px solid white;
                 border-bottom: 0px;
             }
-            tr:last-child{
+            tbody > tr{
                 font-size: 1.5em;
                 border: 1px solid white;
                 border-top: 0px;
-
             }
-            td{
-                color: rgb(62, 80, 91);
-            }
-   
-            a{
-                text-decoration: none;
-                color: rgb(62, 80, 91);
-                &:hover{
-                    text-decoration: underline;
-                }
-        
-            }
-        }
+        }   
     }
-`
+
+    @media(max-width: 1050px){
+        grid-template-columns: 1fr;
+    }
+
+    `
 
 export {StyledCalendarList}

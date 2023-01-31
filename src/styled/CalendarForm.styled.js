@@ -24,18 +24,19 @@ const StyledCalendarForm = styled.form.attrs(props => ({
     }
     label {
         color: #999;
-   
+        display: flex;
+        flex-direction: column;
+        
         input{ 
             color: black;
             width: 90%;
             margin: 1em 0;
-            display: block;
             background-color: rgba(255,255,255,0);
             padding: 0.5em;
             border: 1px solid #c6c6c6;;
             &:hover{
                 border: 1px solid rgb(62, 80, 91);;
-
+                
             }
             &:focus {
                 outline: 0px;
@@ -43,11 +44,29 @@ const StyledCalendarForm = styled.form.attrs(props => ({
             }
             &::active{
                 background-color: #425560;
-
+                
             }
         }
     }
+    @media(max-width: 950px){
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 150px 1fr 1fr 1fr;
+        h1{ 
+            grid-column: 1/3;
+            margin: 0 25px auto auto;
+        } 
+        input {
+            margin: 1em 0;
+        }
+        div:last-child{
+            display: flex;
+            justify-content: start;
+            align-items: center;
+        }
 
-`
+    }
+    
+    `
 
 export {StyledCalendarForm}

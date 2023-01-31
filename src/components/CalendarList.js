@@ -23,20 +23,24 @@ const CalendarList = () => {
         return (
             <li key={itemData.id}>
                 <table>
-                    <tr>
-                        <th>Date:</th>
-                        <th>Time:</th>
-                        <th>With:</th>
-                    </tr>
-                    <tr>
-                        <td>{itemData.date}</td>
-                        <td>{itemData.time}</td>
-                        <td>
-                            <a href={`mailto: ${itemData.email}`}>
-                                {itemData.firstName} {itemData.lastName}
-                            </a>
-                        </td>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Date:</th>
+                            <th>Time:</th>
+                            <th>With:</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{itemData.date}</td>
+                            <td>{itemData.time}</td>
+                            <td>
+                                <a href={`mailto: ${itemData.email}`}>
+                                    {itemData.firstName} {itemData.lastName}
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </li>
         )
