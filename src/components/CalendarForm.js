@@ -48,7 +48,8 @@ class CalendarForm extends React.Component {
             setErrors(newErrors);
         }else{
             this.sendMeetingToApi(this.state)
-            this.clearFormFields();
+            this.clearFormFields();ls
+            
         }
     }
 
